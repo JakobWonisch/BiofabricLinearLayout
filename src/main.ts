@@ -1,4 +1,4 @@
-import { DATA_SIMPLE_GRAPH } from './data/simple.ts';
+import { DATA_SIMPLE_CLIQUE_GRAPH } from './data/simple_multi_edges.ts';
 import './style.css';
 import { generateBetweennessConstraints } from './util/BetweennessConstraintGenerator.ts';
 import { ConstraintSolver } from './util/ConstraintSolver.ts';
@@ -8,7 +8,7 @@ import { parseGml } from './util/GraphParser.ts';
 import { drawBiofabrics } from './util/GraphRenderer.ts';
 import { generateOrderConstraints } from './util/OrderConstraintGenerator.ts';
 
-const graph = parseGml(DATA_SIMPLE_GRAPH);
+const graph = parseGml(DATA_SIMPLE_CLIQUE_GRAPH);
 
 console.log(graph);
 
