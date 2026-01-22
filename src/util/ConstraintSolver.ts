@@ -71,20 +71,42 @@ export class ConstraintSolver {
         });
     }
 
-    generateSequentialityConstraint(nodeA: NodeId, nodeB: NodeId) {
+    generateSequentialityConstraint(nodeI: NodeId, nodeJ: NodeId, nodeK: NodeId) {
         if (this.glpk == null) {
             throw new Error(NOT_INITIALIZED_STRING);
         }
 
-        // TODO: implement constraint
+        const varA = `a_${nodeI}_${nodeJ}_${nodeK}`;
+        const varB = `x_${nodeI}_${nodeJ}`;
+        const varC = `x_${nodeJ}_${nodeK}`;
+
         this.constraints.push({
-            name: `Order constraint ${nodeA}-${nodeB}`,
+            name: `sequentiality 1 ${nodeI}/${nodeJ}/${nodeK}`,
             vars: [
-                { name: 'x1', coef: 1.0 },
-                { name: 'x2', coef: 2.0 }
+                { name: varA, coef: 1.0 },
+                { name: varB, coef: -1.0 },
             ],
-            bnds: { type: this.glpk.GLP_UP, ub: 1.0, lb: 0.0 }
+            bnds: { type: this.glpk.GLP_UP, ub: 0.0, lb: 0.0 }
         });
+        this.constraints.push({
+            name: `sequentiality 2 ${nodeI}/${nodeJ}/${nodeK}`,
+            vars: [
+                { name: varA, coef: 1.0 },
+                { name: varC, coef: -1.0 },
+            ],
+            bnds: { type: this.glpk.GLP_UP, ub: 0.0, lb: 0.0 }
+        });
+        this.constraints.push({
+            name: `sequentiality 3 ${nodeI}/${nodeJ}/${nodeK}`,
+            vars: [
+                { name: varA, coef: 1.0 },
+                { name: varB, coef: -1.0 },
+                { name: varC, coef: -1.0 },
+            ],
+            bnds: { type: this.glpk.GLP_LO, ub: 0.0, lb: -1.0 }
+        });
+
+        this.binaries.push(varA);
     }
 
     generateBetweennessConstraint(nodeA: NodeId, nodeB: NodeId) {
@@ -168,10 +190,9 @@ export class ConstraintSolver {
             name: 'LP',
             objective: {
                 direction: this.glpk.GLP_MAX,
-                name: 'obj',
+                name: 'objective',
                 vars: [
-                    { name: 'x1', coef: 0.6 },
-                    { name: 'x2', coef: 0.5 }
+                    { name: 'x_0_1', coef: 1.0 },
                 ]
             },
             subjectTo: this.constraints,

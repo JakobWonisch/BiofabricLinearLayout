@@ -1,6 +1,6 @@
 import { DATA_SIMPLE_GRAPH } from './data/simple.ts';
-import { DATA_SIMPLE_INTRA_CLUSTER_GRAPH } from './data/simple_with_intra_cluster_edges.ts';
 import './style.css';
+import { generateBetweennessConstraints } from './util/BetweennessConstraintGenerator.ts';
 import { ConstraintSolver } from './util/ConstraintSolver.ts';
 import { GraphHelper } from './util/GraphHelper.ts';
 import { parseGml } from './util/GraphParser.ts';
@@ -18,11 +18,11 @@ await constraintSolver.start();
 
 // generate constraints
 generateOrderConstraints(graph, constraintSolver, graphHelper);
-// constraintSolver.generateBetweennessConstraint(0, 1);
-// ...
+generateBetweennessConstraints(graph, constraintSolver, graphHelper);
 
 const result = await constraintSolver.solve();
 
+console.log("Result: ", result);
 
 let graphDiv = document.createElement("div");
 document.body.appendChild(graphDiv);
