@@ -198,19 +198,31 @@ export class ConstraintSolver {
         this.binaries.push(varCrossing);
     }
 
-    generateGroupingConstraint(nodeA: NodeId, nodeB: NodeId) {
+    generateGroupingConstraint(nodeI: NodeId, nodeK: NodeId, nodeJ: NodeId) {
         if (this.glpk == null) {
             throw new Error(NOT_INITIALIZED_STRING);
         }
 
-        // TODO: implement constraint
+        const varOrderIJ = `x_${nodeI}_${nodeJ}`;
+        const varOrderKJ = `x_${nodeK}_${nodeJ}`;
+        const varOrderJI = `x_${nodeJ}_${nodeI}`;
+        const varOrderJK = `x_${nodeJ}_${nodeK}`;
+
         this.constraints.push({
-            name: `Order constraint ${nodeA}-${nodeB}`,
+            name: `grouping 1 ${nodeI}/${nodeK}/${nodeJ}`,
             vars: [
-                { name: 'x1', coef: 1.0 },
-                { name: 'x2', coef: 2.0 }
+                { name: varOrderIJ, coef: 1.0 },
+                { name: varOrderKJ, coef: -1.0 }
             ],
-            bnds: { type: this.glpk.GLP_UP, ub: 1.0, lb: 0.0 }
+            bnds: { type: this.glpk.GLP_FX, ub: 0.0, lb: 0.0 }
+        });
+        this.constraints.push({
+            name: `grouping 2 ${nodeI}/${nodeK}/${nodeJ}`,
+            vars: [
+                { name: varOrderJK, coef: 1.0 },
+                { name: varOrderJI, coef: -1.0 }
+            ],
+            bnds: { type: this.glpk.GLP_FX, ub: 0.0, lb: 0.0 }
         });
     }
 

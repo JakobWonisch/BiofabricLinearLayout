@@ -1,4 +1,5 @@
 import { DATA_SIMPLE_CLIQUE_GRAPH } from './data/simple_multi_edges.ts';
+import { DATA_SIMPLE_INTRA_CLUSTER_GRAPH } from './data/simple_with_intra_cluster_edges.ts';
 import './style.css';
 import { generateBetweennessConstraints } from './util/BetweennessConstraintGenerator.ts';
 import { ConstraintSolver } from './util/ConstraintSolver.ts';
@@ -6,9 +7,10 @@ import { generateCrossingConstraints } from './util/CrossingsConstraintGenerator
 import { GraphHelper } from './util/GraphHelper.ts';
 import { parseGml } from './util/GraphParser.ts';
 import { drawBiofabrics } from './util/GraphRenderer.ts';
+import { generateGroupingConstraints } from './util/GroupingConstraintGenerator.ts';
 import { generateOrderConstraints } from './util/OrderConstraintGenerator.ts';
 
-const graph = parseGml(DATA_SIMPLE_CLIQUE_GRAPH);
+const graph = parseGml(DATA_SIMPLE_INTRA_CLUSTER_GRAPH);
 
 console.log(graph);
 
@@ -21,6 +23,7 @@ await constraintSolver.start();
 generateOrderConstraints(graph, constraintSolver, graphHelper);
 generateBetweennessConstraints(graph, constraintSolver, graphHelper);
 generateCrossingConstraints(graph, constraintSolver, graphHelper);
+generateGroupingConstraints(graph, constraintSolver, graphHelper);
 
 const result = await constraintSolver.solve();
 
