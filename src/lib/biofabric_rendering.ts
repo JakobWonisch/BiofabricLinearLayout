@@ -1,18 +1,45 @@
-import { create } from "d3";
+import { create, type Selection as d3Selection } from "d3";
 import type { Graph } from "../types/biofabric";
 
 
-export function render_biofabric(graph: Graph, ordernodes: number[], orderedges: number[], result: unknown, nodetitle: string, edgetitle: string, print_title = true, stroke_width = 3, rect_size = 5) {
+export type BiofabricResult = {
+    // y coordinate of connecting points local to this group
+    nodeToConnectingPoint: { [key: number]: number };
+}
 
-    let svgwidth = 500;
-    let svgheight = 500;
+export type BiofabricParameters = {
+    svgwidth?: number;
+    svgheight?: number;
+    graph: Graph;
+    ordernodes: number[];
+    orderedges: number[];
+    result: unknown;
+    nodetitle: string;
+    edgetitle: string;
+    print_title?: boolean;
+    stroke_width?: number;
+    rect_size?: number;
+}
+
+export function render_biofabric(svg: d3Selection<SVGGElement, undefined, null, undefined>, params: BiofabricParameters): BiofabricResult {
+    const {
+        svgwidth = 500,
+        svgheight = 500,
+        graph,
+        ordernodes,
+        orderedges,
+        result,
+        nodetitle,
+        edgetitle,
+        print_title = true,
+        stroke_width = 3,
+        rect_size = 5,
+    } = params;
+
     let padding = { left: 30, right: 20, top: (print_title ? 40 : 20), bottom: 50 }
     let color_by_staircase = true;
     let show_node_indices = true;
     let show_edge_indices = false;
-
-    const svg = create('svg')
-        .attr("viewBox", [0, 0, svgwidth, svgheight])
 
     let numnodes = graph.nodes.length;
     let numedges = graph.links.length;
@@ -28,8 +55,11 @@ export function render_biofabric(graph: Graph, ordernodes: number[], orderedges:
 
     let node_h_dict: { [key: number]: number } = {};
 
-    for (let i in ordernodes) {
-        let line_h = padding.top + (svgheight - padding.top - padding.bottom) / numnodes * i
+    // draw horizontal lines
+    for (let index in ordernodes) {
+        const i = Number(index);
+
+        let line_h = padding.top + (svgheight - padding.top - padding.bottom) / numnodes * i;
 
         node_h_dict[ordernodes[i]] = line_h;
 
@@ -254,5 +284,7 @@ export function render_biofabric(graph: Graph, ordernodes: number[], orderedges:
     }
 
 
-    return svg.node();
+    return {
+        nodeToConnectingPoint: node_h_dict
+    };
 }
