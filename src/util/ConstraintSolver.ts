@@ -7,6 +7,8 @@ const NOT_INITIALIZED_STRING = "glpk not initialized!";
 export class ConstraintSolver {
 
     private constraints: LP["subjectTo"] = [];
+    private binaries: string[] = [];
+    private integers: string[] = [];
     private graph: Graph;
     private glpk?: GLPKObject;
 
@@ -24,17 +26,22 @@ export class ConstraintSolver {
         }
 
         // TODO: implement constraint
+        const varA = `x_${nodeA}_${nodeB}`;
+        const varB = `x_${nodeB}_${nodeA}`;
+
         this.constraints.push({
-            name: `Order constraint ${nodeA}-${nodeB}`,
+            name: `order ${nodeA}/${nodeB}`,
             vars: [
-                { name: 'x1', coef: 1.0 },
-                { name: 'x2', coef: 2.0 }
+                { name: varA, coef: 1.0 },
+                { name: varB, coef: 1.0 }
             ],
-            bnds: { type: this.glpk.GLP_UP, ub: 1.0, lb: 0.0 }
+            bnds: { type: this.glpk.GLP_FX, ub: 1.0, lb: 1.0 }
         });
+        this.binaries.push(varA);
+        this.binaries.push(varB);
     }
 
-    generateReflixivityConstraint(nodeA: NodeId, nodeB: NodeId) {
+    generateReflexivityConstraint(nodeA: NodeId, nodeB: NodeId) {
         if (this.glpk == null) {
             throw new Error(NOT_INITIALIZED_STRING);
         }
@@ -156,7 +163,10 @@ export class ConstraintSolver {
             presol: true
         };
 
-        return await this.glpk.solve({
+        this.binaries = [...new Set(this.binaries)];
+        this.integers = [...new Set(this.integers)];
+
+        const lp = {
             name: 'LP',
             objective: {
                 direction: this.glpk.GLP_MAX,
@@ -166,7 +176,14 @@ export class ConstraintSolver {
                     { name: 'x2', coef: 0.5 }
                 ]
             },
-            subjectTo: this.constraints
-        }, options);
+            subjectTo: this.constraints,
+            binaries: this.binaries,
+            generals: this.integers,
+        };
+        const result = await this.glpk.solve(lp, options);
+
+        console.log(await this.glpk.write(lp));
+
+        return result;
     }
 }
