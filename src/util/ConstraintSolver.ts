@@ -243,14 +243,18 @@ export class ConstraintSolver {
         this.binaries = [...new Set(this.binaries)];
         this.integers = [...new Set(this.integers)];
 
+        const vars = this.binaries.filter(x => x[0] == "c").map(x => {
+            return ({
+                name: x, coef: 1.0
+            });
+        });
+
         const lp = {
             name: 'LP',
             objective: {
-                direction: this.glpk.GLP_MAX,
+                direction: this.glpk.GLP_MIN,
                 name: 'objective',
-                vars: [
-                    { name: 'x_0_1', coef: 1.0 },
-                ]
+                vars
             },
             subjectTo: this.constraints,
             binaries: this.binaries,
