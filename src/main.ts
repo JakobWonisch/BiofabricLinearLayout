@@ -9,6 +9,7 @@ import { parseGml } from './util/GraphParser.ts';
 import { drawBiofabrics } from './util/GraphRenderer.ts';
 import { generateGroupingConstraints } from './util/GroupingConstraintGenerator.ts';
 import { generateOrderConstraints } from './util/OrderConstraintGenerator.ts';
+import { getOrderFromResult } from './util/ResultParser.ts';
 
 const graph = parseGml(DATA_SIMPLE_INTRA_CLUSTER_GRAPH);
 
@@ -28,6 +29,9 @@ generateGroupingConstraints(graph, constraintSolver, graphHelper);
 const result = await constraintSolver.solve();
 
 console.log("Result: ", result);
+console.log(getOrderFromResult(graph, result));
+
+
 
 let graphDiv = document.createElement("div");
 document.body.appendChild(graphDiv);
