@@ -1,0 +1,23 @@
+
+export type NodeId = number;
+
+export type Node = {
+    id: NodeId;
+    label: string;
+    partition: number;
+};
+
+export type Edge = {
+    label: string;
+    source: NodeId;
+    target: NodeId;
+    value: number;
+};
+
+export type Graph = {
+    directed: number;
+    weighted: number;
+    edges: Edge[];
+    nodes: Node[];
+    [key: string]: any;
+};

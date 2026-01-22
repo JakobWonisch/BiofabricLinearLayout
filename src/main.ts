@@ -2,9 +2,10 @@ import './style.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.ts'
-import { parse } from './gmaParser.ts';
+import { parse } from './gmlParser.ts';
+import { TEST_GRAPH } from './data.ts';
 
-console.log(parse("test"));
+parse(TEST_GRAPH);
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
