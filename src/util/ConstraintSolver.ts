@@ -149,20 +149,53 @@ export class ConstraintSolver {
         this.binaries.push(varC);
     }
 
-    generateCrossingConstraint(nodeA: NodeId, nodeB: NodeId) {
+    generateCrossingConstraint(nodeI: NodeId, nodeJ: NodeId, nodeK: NodeId, nodeL: NodeId) {
         if (this.glpk == null) {
             throw new Error(NOT_INITIALIZED_STRING);
         }
 
-        // TODO: implement constraint
+        const varCrossing = `c_${nodeI}_${nodeJ}_${nodeK}_${nodeL}`;
+        const varBetweenIJL = `b_${nodeI}_${nodeJ}_${nodeL}`;
+        const varBetweenIJK = `b_${nodeI}_${nodeJ}_${nodeK}`;
+
         this.constraints.push({
-            name: `Order constraint ${nodeA}-${nodeB}`,
+            name: `crossing 1 ${nodeI}/${nodeJ}/${nodeK}/${nodeL}`,
             vars: [
-                { name: 'x1', coef: 1.0 },
-                { name: 'x2', coef: 2.0 }
+                { name: varCrossing, coef: 1.0 },
+                { name: varBetweenIJK, coef: -1.0 },
+                { name: varBetweenIJL, coef: 1.0 },
             ],
-            bnds: { type: this.glpk.GLP_UP, ub: 1.0, lb: 0.0 }
+            bnds: { type: this.glpk.GLP_LO, ub: 0.0, lb: 0.0 }
         });
+        this.constraints.push({
+            name: `crossing 2 ${nodeI}/${nodeJ}/${nodeK}/${nodeL}`,
+            vars: [
+                { name: varCrossing, coef: 1.0 },
+                { name: varBetweenIJL, coef: -1.0 },
+                { name: varBetweenIJK, coef: 1.0 },
+            ],
+            bnds: { type: this.glpk.GLP_LO, ub: 0.0, lb: 0.0 }
+        });
+        this.constraints.push({
+            name: `crossing 3 ${nodeI}/${nodeJ}/${nodeK}/${nodeL}`,
+            vars: [
+                { name: varCrossing, coef: 1.0 },
+                { name: varBetweenIJK, coef: -1.0 },
+                { name: varBetweenIJL, coef: -1.0 },
+            ],
+            bnds: { type: this.glpk.GLP_UP, ub: 0.0, lb: 0.0 }
+        });
+        this.constraints.push({
+            name: `crossing 4 ${nodeI}/${nodeJ}/${nodeK}/${nodeL}`,
+            vars: [
+                { name: varCrossing, coef: 1.0 },
+                { name: varBetweenIJK, coef: 1.0 },
+                { name: varBetweenIJL, coef: 1.0 },
+            ],
+            bnds: { type: this.glpk.GLP_UP, ub: 2.0, lb: 0.0 }
+        });
+
+        this.binaries.push(varCrossing);
     }
 
     generateGroupingConstraint(nodeA: NodeId, nodeB: NodeId) {
@@ -210,14 +243,18 @@ export class ConstraintSolver {
         this.binaries = [...new Set(this.binaries)];
         this.integers = [...new Set(this.integers)];
 
+        const vars = this.binaries.filter(x => x[0] == "c").map(x => {
+            return ({
+                name: x, coef: 1.0
+            });
+        });
+
         const lp = {
             name: 'LP',
             objective: {
-                direction: this.glpk.GLP_MAX,
+                direction: this.glpk.GLP_MIN,
                 name: 'objective',
-                vars: [
-                    { name: 'x_0_1', coef: 1.0 },
-                ]
+                vars
             },
             subjectTo: this.constraints,
             binaries: this.binaries,
