@@ -15,7 +15,7 @@ export type BiofabricParameters = {
     orderedges: number[];
     result: unknown;
     nodetitle: string;
-    edgetitle: string;
+    edgetitle?: string;
     print_title?: boolean;
     stroke_width?: number;
     rect_size?: number;
@@ -51,7 +51,7 @@ export function render_biofabric(svg: d3Selection<SVGGElement, undefined, null, 
         .style("font-family", "Arial")
         .style("font-weight", "bold")
         .style("fill", "gray")
-        .text(nodetitle + " + " + edgetitle)
+        .text(nodetitle + (edgetitle == null ? '' : (" + " + edgetitle)))
 
     let node_h_dict: { [key: number]: number } = {};
 
@@ -141,7 +141,8 @@ export function render_biofabric(svg: d3Selection<SVGGElement, undefined, null, 
                 //         else return staircase_color_2
                 //     } else return "gray"
                 // }
-                return "gray"
+                return "red"
+                // return "gray"
             })
             .attr("stroke-width", stroke_width)
             .style("stroke-linecap", "round")

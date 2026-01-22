@@ -1,11 +1,11 @@
-import { DATA_SIMPLE_GRAPH } from './data/simple.ts';
+import { DATA_SIMPLE_INTRA_CLUSTER_GRAPH } from './data/simple_with_intra_cluster_edges.ts';
 import './style.css';
 import { ConstraintSolver } from './util/ConstraintSolver.ts';
 import { GraphHelper } from './util/GraphHelper.ts';
 import { parseGml } from './util/GraphParser.ts';
 import { drawBiofabrics } from './util/GraphRenderer.ts';
 
-const graph = parseGml(DATA_SIMPLE_GRAPH);
+const graph = parseGml(DATA_SIMPLE_INTRA_CLUSTER_GRAPH);
 
 console.log(graph);
 
