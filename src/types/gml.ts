@@ -8,10 +8,10 @@ export type Node = {
 };
 
 export type Edge = {
-    label: string;
     source: NodeId;
     target: NodeId;
-    value: number;
+    label?: string;
+    value?: number;
 };
 
 export type GmlGraph = {

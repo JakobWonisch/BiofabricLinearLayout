@@ -1,12 +1,13 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
-import { parse } from './gmlParser.ts';
-import { TEST_GRAPH } from './data.ts';
+import { setupCounter } from './counter.ts';
+import { DATA_SIMPLE_GRAPH } from './data/simple.ts';
+import './style.css';
+import typescriptLogo from './typescript.svg';
 import { parseGml } from './util/GraphParser.ts';
+import viteLogo from '/vite.svg';
 
-const graph = parseGml(TEST_GRAPH);
+const graph = parseGml(DATA_SIMPLE_GRAPH);
+
+console.log(graph);
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>

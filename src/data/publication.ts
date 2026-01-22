@@ -1,4 +1,4 @@
-export const TEST_GRAPH = `graph [
+export const DATA_PUBLICATION_GRAPH = `graph [
 	directed 0
 	weighted 1
 	node [
