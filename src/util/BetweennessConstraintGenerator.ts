@@ -15,6 +15,11 @@ export function generateBetweennessConstraints(graph: Graph, constraintSolver: C
                     graph.nodes[j].id,
                     graph.nodes[k].id,
                 );
+                constraintSolver.generateBetweennessConstraint(
+                    graph.nodes[i].id,
+                    graph.nodes[j].id,
+                    graph.nodes[k].id,
+                );
             }
         }
     }

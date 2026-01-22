@@ -109,20 +109,44 @@ export class ConstraintSolver {
         this.binaries.push(varA);
     }
 
-    generateBetweennessConstraint(nodeA: NodeId, nodeB: NodeId) {
+    generateBetweennessConstraint(nodeI: NodeId, nodeJ: NodeId, nodeK: NodeId) {
         if (this.glpk == null) {
             throw new Error(NOT_INITIALIZED_STRING);
         }
 
-        // TODO: implement constraint
+        const varA = `a_${nodeI}_${nodeK}_${nodeJ}`;
+        const varB = `a_${nodeJ}_${nodeK}_${nodeI}`;
+        const varC = `b_${nodeI}_${nodeJ}_${nodeK}`;
+
         this.constraints.push({
-            name: `Order constraint ${nodeA}-${nodeB}`,
+            name: `betweenness 1 ${nodeI}/${nodeJ}/${nodeK}`,
             vars: [
-                { name: 'x1', coef: 1.0 },
-                { name: 'x2', coef: 2.0 }
+                { name: varC, coef: 1.0 },
+                { name: varA, coef: -1.0 },
             ],
-            bnds: { type: this.glpk.GLP_UP, ub: 1.0, lb: 0.0 }
+            bnds: { type: this.glpk.GLP_LO, ub: 0.0, lb: 0.0 }
         });
+
+        this.constraints.push({
+            name: `betweenness 2 ${nodeI}/${nodeJ}/${nodeK}`,
+            vars: [
+                { name: varC, coef: 1.0 },
+                { name: varB, coef: -1.0 },
+            ],
+            bnds: { type: this.glpk.GLP_LO, ub: 0.0, lb: 0.0 }
+        });
+
+        this.constraints.push({
+            name: `betweenness 3 ${nodeI}/${nodeJ}/${nodeK}`,
+            vars: [
+                { name: varC, coef: 1.0 },
+                { name: varB, coef: -1.0 },
+                { name: varA, coef: -1.0 },
+            ],
+            bnds: { type: this.glpk.GLP_UP, ub: 0.0, lb: 0.0 }
+        });
+
+        this.binaries.push(varC);
     }
 
     generateCrossingConstraint(nodeA: NodeId, nodeB: NodeId) {
