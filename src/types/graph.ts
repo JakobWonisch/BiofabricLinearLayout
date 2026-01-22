@@ -7,4 +7,5 @@ export type Partition = {
 
 export type Graph = GmlGraph & {
     partitions: Partition[];
+    nodeToPartition: { [key: NodeId]: Partition | undefined };
 };

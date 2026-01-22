@@ -6,22 +6,33 @@ export function parseGml(gml: string): Graph {
     const gmlGraph = parse(gml);
 
     // collect partitions
-    const partitions: { [key: number]: NodeId[] } = {};
+    const partitionMap: { [key: number]: NodeId[] } = {};
 
     for (const node of gmlGraph.nodes) {
         const partitionId = node.partition ?? -1;
-        const partitionNodes: NodeId[] = partitions[partitionId] ?? [];
+        const partitionNodes: NodeId[] = partitionMap[partitionId] ?? [];
 
         partitionNodes.push(node.id);
 
-        partitions[partitionId] = partitionNodes;
+        partitionMap[partitionId] = partitionNodes;
+    }
+
+    const partitions = Object.entries(partitionMap).map((entry): Partition => ({
+        id: Number(entry[0]),
+        nodes: entry[1],
+    }));
+
+    const nodeToPartition: { [key: NodeId]: Partition | undefined } = {};
+
+    for (const node of gmlGraph.nodes) {
+        const partitionId = node.partition ?? -1
+
+        nodeToPartition[node.id] = partitions.find(x => x.id == partitionId);
     }
 
     return {
         ...gmlGraph,
-        partitions: Object.entries(partitions).map((entry): Partition => ({
-            id: Number(entry[0]),
-            nodes: entry[1],
-        })),
+        partitions,
+        nodeToPartition,
     }
 }
