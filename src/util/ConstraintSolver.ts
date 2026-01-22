@@ -25,7 +25,6 @@ export class ConstraintSolver {
             throw new Error(NOT_INITIALIZED_STRING);
         }
 
-        // TODO: implement constraint
         const varA = `x_${nodeA}_${nodeB}`;
         const varB = `x_${nodeB}_${nodeA}`;
 
@@ -37,39 +36,38 @@ export class ConstraintSolver {
             ],
             bnds: { type: this.glpk.GLP_FX, ub: 1.0, lb: 1.0 }
         });
+
         this.binaries.push(varA);
         this.binaries.push(varB);
     }
 
-    generateReflexivityConstraint(nodeA: NodeId, nodeB: NodeId) {
+    generateTransitivityConstraint(nodeI: NodeId, nodeJ: NodeId, nodeK: NodeId) {
         if (this.glpk == null) {
             throw new Error(NOT_INITIALIZED_STRING);
         }
 
-        // TODO: implement constraint
+        const varA = `x_${nodeI}_${nodeJ}`;
+        const varB = `x_${nodeJ}_${nodeK}`;
+        const varC = `x_${nodeI}_${nodeK}`;
+
         this.constraints.push({
-            name: `Order constraint ${nodeA}-${nodeB}`,
+            name: `transitivity up ${nodeI}/${nodeJ}/${nodeK}`,
             vars: [
-                { name: 'x1', coef: 1.0 },
-                { name: 'x2', coef: 2.0 }
+                { name: varA, coef: 1.0 },
+                { name: varB, coef: 1.0 },
+                { name: varC, coef: -1.0 }
             ],
             bnds: { type: this.glpk.GLP_UP, ub: 1.0, lb: 0.0 }
         });
-    }
 
-    generateTransitivityConstraint(nodeA: NodeId, nodeB: NodeId) {
-        if (this.glpk == null) {
-            throw new Error(NOT_INITIALIZED_STRING);
-        }
-
-        // TODO: implement constraint
         this.constraints.push({
-            name: `Order constraint ${nodeA}-${nodeB}`,
+            name: `transitivity lo ${nodeI}/${nodeJ}/${nodeK}`,
             vars: [
-                { name: 'x1', coef: 1.0 },
-                { name: 'x2', coef: 2.0 }
+                { name: varA, coef: 1.0 },
+                { name: varB, coef: 1.0 },
+                { name: varC, coef: -1.0 }
             ],
-            bnds: { type: this.glpk.GLP_UP, ub: 1.0, lb: 0.0 }
+            bnds: { type: this.glpk.GLP_LO, ub: 0.0, lb: 0.0 }
         });
     }
 
