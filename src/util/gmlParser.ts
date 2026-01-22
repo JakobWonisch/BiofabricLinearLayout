@@ -1,4 +1,4 @@
-import type { Edge, GmlGraph, Node } from "./types/gml";
+import type { Edge, GmlGraph, Node } from "../types/gml";
 
 export function parse(gml: string): GmlGraph {
 

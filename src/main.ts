@@ -1,6 +1,6 @@
 import { DATA_SIMPLE_GRAPH } from './data/simple.ts';
 import './style.css';
-import { ConstraintGenerator } from './util/ConstraintGenerator.ts';
+import { ConstraintSolver } from './util/ConstraintSolver.ts';
 import { GraphHelper } from './util/GraphHelper.ts';
 import { parseGml } from './util/GraphParser.ts';
 
@@ -9,4 +9,15 @@ const graph = parseGml(DATA_SIMPLE_GRAPH);
 console.log(graph);
 
 const graphHelper = new GraphHelper(graph);
-const constraintGenerator = new ConstraintGenerator(graph);
+const constraintSolver = new ConstraintSolver(graph);
+
+await constraintSolver.start();
+
+// generate constraints
+// constraintGenerator.generateOrderConstraint(0, 1);
+// constraintGenerator.generateBetweennessConstraint(0, 1);
+// ...
+
+const result = await constraintSolver.solve();
+
+console.log("result: ", result);
