@@ -1,4 +1,4 @@
-import { parse } from "./gmlParser";
+import { parse } from "../lib/gmlParser";
 import type { NodeId } from "../types/gml";
 import type { Graph, Partition } from "../types/graph";
 
