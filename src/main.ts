@@ -4,8 +4,9 @@ import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.ts'
 import { parse } from './gmlParser.ts';
 import { TEST_GRAPH } from './data.ts';
+import { parseGml } from './util/GraphParser.ts';
 
-parse(TEST_GRAPH);
+const graph = parseGml(TEST_GRAPH);
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>

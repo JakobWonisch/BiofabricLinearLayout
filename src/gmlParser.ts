@@ -1,6 +1,6 @@
-import type { Edge, Graph, Node } from "./types/gml";
+import type { Edge, GmlGraph, Node } from "./types/gml";
 
-export function parse(gml: string) {
+export function parse(gml: string): GmlGraph {
 
 	var json = ('{\n' + gml + '\n}')
 		.replace(/^(\s*)(\w+)\s*\[/gm, '$1"$2": {')
@@ -8,7 +8,7 @@ export function parse(gml: string) {
 		.replace(/^(\s*)(\w+)\s+(.+)$/gm, '$1"$2": $3,')
 		.replace(/,(\s*)\}/g, '$1}');
 
-	var graph: Graph = {
+	var graph: GmlGraph = {
 		directed: 0,
 		weighted: 0,
 		edges: [],
@@ -32,7 +32,7 @@ export function parse(gml: string) {
 	});
 
 	try {
-		console.log(json)
+		// console.log(json)
 		parsed = JSON.parse(json);
 	}
 	catch (err) {
@@ -71,7 +71,7 @@ export function parse(gml: string) {
 	graph.nodes = nodes;
 	graph.edges = edges;
 
-	console.log(graph);
+	// console.log(graph);
 
 	return graph;
 };

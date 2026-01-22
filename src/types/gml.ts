@@ -14,7 +14,7 @@ export type Edge = {
     value: number;
 };
 
-export type Graph = {
+export type GmlGraph = {
     directed: number;
     weighted: number;
     edges: Edge[];
