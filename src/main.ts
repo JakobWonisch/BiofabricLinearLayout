@@ -36,7 +36,7 @@ console.log(getOrderFromResult(graph, result));
 let graphDiv = document.createElement("div");
 document.body.appendChild(graphDiv);
 
-const renderedGraph = drawBiofabrics(graph);
+const renderedGraph = drawBiofabrics(graph, getOrderFromResult(graph, result));
 
 if (renderedGraph == null) {
   console.warn("could not draw graph");

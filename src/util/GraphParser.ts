@@ -1,11 +1,8 @@
 import { parse } from "../lib/gmlParser";
-import type { NodeId } from "../types/gml";
+import type { GmlGraph, NodeId } from "../types/gml";
 import type { Graph, Partition } from "../types/graph";
 
-export function parseGml(gml: string): Graph {
-    const gmlGraph = parse(gml);
-
-    // collect partitions
+export function calculatePartitions(gmlGraph: GmlGraph): Partition[] {
     const partitionMap: { [key: number]: NodeId[] } = {};
 
     for (const node of gmlGraph.nodes) {
@@ -21,6 +18,14 @@ export function parseGml(gml: string): Graph {
         id: Number(entry[0]),
         nodes: entry[1],
     }));
+
+    return partitions;
+}
+
+export function parseGml(gml: string): Graph {
+    const gmlGraph = parse(gml);
+
+    const partitions = calculatePartitions(gmlGraph);
 
     const nodeToPartition: { [key: NodeId]: Partition | undefined } = {};
 
