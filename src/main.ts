@@ -1,4 +1,3 @@
-import { DATA_SIMPLE_CLIQUE_GRAPH } from './data/simple_multi_edges.ts';
 import { DATA_SIMPLE_INTRA_CLUSTER_GRAPH } from './data/simple_with_intra_cluster_edges.ts';
 import './style.css';
 import { generateBetweennessConstraints } from './util/BetweennessConstraintGenerator.ts';

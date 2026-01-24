@@ -9,12 +9,18 @@
 </head>
 
 <body>
-  <p>Input a graph in GML format with a <em>partition</em> value set for each node. Use integer values for ids and
-    partitions for now.</p>
-  <textarea id="graph-input"></textarea>
-  <button id="submit">Go</button>
+  <div class="layout">
 
-  <div id="app"></div>
+    <div class="input">
+      <p>Input a graph in GML format with a <em>partition</em> value set for each node. Use integer values for ids and
+        partitions for now.</p>
+      <textarea id="graph-input"></textarea>
+      <button id="submit">Go</button>
+    </div>
+
+    <div id="app"></div>
+  </div>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 
