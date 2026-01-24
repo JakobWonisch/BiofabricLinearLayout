@@ -27,16 +27,19 @@ generateCrossingConstraints(graph, constraintSolver, graphHelper);
 generateGroupingConstraints(graph, constraintSolver, graphHelper);
 
 const result = await constraintSolver.solve();
+const order = getOrderFromResult(graph, result);
 
 console.log("Result: ", result);
-console.log(getOrderFromResult(graph, result));
+console.log("vars: ", result.result.vars);
+console.log("nodes: ", graph.nodes.map(x => x.id));
+console.log("order: ", order);
 
 
 
 let graphDiv = document.createElement("div");
 document.body.appendChild(graphDiv);
 
-const renderedGraph = drawBiofabrics(graph, getOrderFromResult(graph, result));
+const renderedGraph = drawBiofabrics(graph, order);
 
 if (renderedGraph == null) {
   console.warn("could not draw graph");
