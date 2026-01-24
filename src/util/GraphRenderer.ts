@@ -4,13 +4,35 @@ import * as Biofabric from "../types/biofabric";
 import type { NodeId } from "../types/gml";
 import type { Graph } from "../types/graph";
 import { GraphHelper } from "./GraphHelper";
+import { calculatePartitions } from "./GraphParser";
 
 
-export function drawBiofabrics(graph: Graph, baseParams?: BiofabricParameters) {
+export function drawBiofabrics(graph: Graph, order: number[], baseParams?: BiofabricParameters) {
     const graphHelper = new GraphHelper(graph);
     const paramList: BiofabricParameters[] = [];
 
-    // TODO: get partition order from solver
+    const targetIndices: { [key: number]: number } = {};
+
+    graph.nodes.forEach((v, i) => {
+        targetIndices[v.id] = order[i];
+    });
+
+    graph.nodes = graph.nodes.sort((a, b) => {
+        return targetIndices[a.id] - targetIndices[b.id];
+    });
+    // partition order is not guaranteed. sort by index of representative node.
+    graph.partitions = calculatePartitions(graph).sort((a, b) => {
+        const representativeNodeA = a.nodes[0];
+        const representativeNodeB = b.nodes[0];
+
+        if (representativeNodeA == null) {
+            console.warn("representative node is null");
+            return -1;
+        }
+
+        return targetIndices[representativeNodeA] - targetIndices[representativeNodeB];
+    });
+
     for (const partition of graph.partitions) {
         const intraGroupEdges = graph.edges.filter(x => partition.nodes.includes(x.source) && partition.nodes.includes(x.target));
         const biofabricGraph: Biofabric.Graph = {
@@ -22,7 +44,6 @@ export function drawBiofabrics(graph: Graph, baseParams?: BiofabricParameters) {
             }))
         };
 
-        // TODO: get this from solver
         let nodeordering = biofabricGraph.nodes.map(n => n)
         let edgeordering = biofabricGraph.links.map(e => e.id)
 
