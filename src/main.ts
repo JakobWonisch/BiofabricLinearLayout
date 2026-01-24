@@ -11,38 +11,63 @@ import { generateGroupingConstraints } from './util/GroupingConstraintGenerator.
 import { generateOrderConstraints } from './util/OrderConstraintGenerator.ts';
 import { getOrderFromResult } from './util/ResultParser.ts';
 
-const graph = parseGml(DATA_SIMPLE_INTRA_CLUSTER_GRAPH);
+async function processGraph(data: string) {
+  const graph = parseGml(data);
 
-console.log(graph);
+  console.log(graph);
 
-const graphHelper = new GraphHelper(graph);
-const constraintSolver = new ConstraintSolver(graph);
+  const graphHelper = new GraphHelper(graph);
+  const constraintSolver = new ConstraintSolver(graph);
 
-await constraintSolver.start();
+  await constraintSolver.start();
 
-// generate constraints
-generateOrderConstraints(graph, constraintSolver, graphHelper);
-generateBetweennessConstraints(graph, constraintSolver, graphHelper);
-generateCrossingConstraints(graph, constraintSolver, graphHelper);
-generateGroupingConstraints(graph, constraintSolver, graphHelper);
+  // generate constraints
+  generateOrderConstraints(graph, constraintSolver, graphHelper);
+  generateBetweennessConstraints(graph, constraintSolver, graphHelper);
+  generateCrossingConstraints(graph, constraintSolver, graphHelper);
+  generateGroupingConstraints(graph, constraintSolver, graphHelper);
 
-const result = await constraintSolver.solve();
-const order = getOrderFromResult(graph, result);
+  const result = await constraintSolver.solve();
+  const order = getOrderFromResult(graph, result);
 
-console.log("Result: ", result);
-console.log("vars: ", result.result.vars);
-console.log("nodes: ", graph.nodes.map(x => x.id));
-console.log("order: ", order);
+  console.log("Result: ", result);
+  console.log("vars: ", result.result.vars);
+  console.log("nodes: ", graph.nodes.map(x => x.id));
+  console.log("order: ", order);
 
 
 
-let graphDiv = document.createElement("div");
-document.body.appendChild(graphDiv);
+  let graphDiv = document.getElementById("app");
 
-const renderedGraph = drawBiofabrics(graph, order);
+  if (graphDiv == null) {
+    graphDiv = document.createElement("div");
+    graphDiv.id = "app";
+    document.body.appendChild(graphDiv);
+  }
 
-if (renderedGraph == null) {
-  console.warn("could not draw graph");
+  graphDiv.innerHTML = "";
+  const renderedGraph = drawBiofabrics(graph, order);
+
+  if (renderedGraph == null) {
+    console.warn("could not draw graph");
+  } else {
+    graphDiv.append(renderedGraph);
+  }
+}
+
+const defaultData = DATA_SIMPLE_INTRA_CLUSTER_GRAPH;
+processGraph(defaultData);
+
+const graphInput = document.getElementById("graph-input") as HTMLTextAreaElement | null;
+const graphSubmitButton = document.getElementById("submit");
+
+if (graphInput == null || graphSubmitButton == null) {
+  alert("could not find input fields");
 } else {
-  graphDiv.append(renderedGraph);
+  graphInput.placeholder = defaultData;
+
+  graphSubmitButton.addEventListener("click", () => {
+    processGraph(graphInput.value);
+    graphInput.value = "";
+  })
 }
