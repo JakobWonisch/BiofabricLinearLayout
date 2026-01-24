@@ -126,16 +126,21 @@ export function drawBiofabrics(graph: Graph, order: number[], baseParams?: Biofa
         .append("path")
         .attr("d", d => {
             const x = svgwidth - 20;
-            const start = [x, getY(d.source)] as [number, number];
-            const end = [x, getY(d.target)] as [number, number];
-            const radiusDistance = Math.abs(start[1] - end[1]) / 2;
+            let start = getY(d.source);
+            let end = getY(d.target);
+            if (start > end) {
+                const temp = end;
+                end = start;
+                start = temp;
+            }
+            const radiusDistance = Math.abs(start - end) / 2;
             const radiusBendDistance = radiusDistance * 0.2;
 
             if (externalEdgesMargin < radiusBendDistance) {
                 externalEdgesMargin = radiusBendDistance;
             }
 
-            return `M ${x} ${start[1]} A ${radiusBendDistance} ${radiusDistance} 0 0 1 ${x} ${end[1]}`;
+            return `M ${x} ${start} A ${radiusBendDistance} ${radiusDistance} 0 0 1 ${x} ${end}`;
         })
         .attr("fill", "none")
         .attr("stroke", "#eee")
